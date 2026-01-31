@@ -1,0 +1,192 @@
+[
+    {
+        "building": "Richards Hall",
+        "code": "RI",
+        "zone": "Center Zone"
+    },
+    {
+        "building": "Hayden Hall",
+        "code": "HA",
+        "zone": "Center Zone"
+    },
+    {
+        "building": "Ell Hall",
+        "code": "EL",
+        "zone": "Center Zone"
+    },
+    {
+        "building": "Dodge Hall",
+        "code": "DG",
+        "zone": "Center Zone"
+    },
+    {
+        "building": "Renaissances Park",
+        "code": "RP",
+        "zone": "Columbus Zone"
+    },
+    {
+        "building": "Interdisciplinary Science & Eng",
+        "code": "ISEC",
+        "zone": "Columbus Zone"
+    },
+    {
+        "building": "International Village - Residence",
+        "code": "IV",
+        "zone": "Columbus Zone"
+    },
+    {
+        "building": "Egan Engineering/Science Research Center",
+        "code": "EC",
+        "zone": "Columbus Zone"
+    },
+    {
+        "building": "Robinson Hall",
+        "code": "RB",
+        "zone": "East Zone"
+    },
+    {
+        "building": "Mugar Life Sciences Building",
+        "code": "MU",
+        "zone": "East Zone"
+    },
+    {
+        "building": "Hurtig Hall",
+        "code": "HT",
+        "zone": "East Zone"
+    },
+    {
+        "building": "Hastings Hall",
+        "code": "HS",
+        "zone": "East Zone"
+    },
+    {
+        "building": "East Village",
+        "code": "EV",
+        "zone": "East Zone"
+    },
+    {
+        "building": "Cullinane Hall",
+        "code": "NI",
+        "zone": "East Zone"
+    },
+    {
+        "building": "EXP",
+        "code": "EXP",
+        "zone": "Ruggles Zone"
+    },
+    {
+        "building": "Stetson East",
+        "code": "SE",
+        "zone": "Hemenway Zone"
+    },
+    {
+        "building": "Cahners Hall",
+        "code": "CA",
+        "zone": "Hemenway Zone"
+    },
+    {
+        "building": "140 The Fenway",
+        "code": "TF",
+        "zone": "Hemenway Zone"
+    },
+    {
+        "building": "West Village H",
+        "code": "WVH",
+        "zone": "Ruggles Zone"
+    },
+    {
+        "building": "West Village G",
+        "code": "WVG",
+        "zone": "Ruggles Zone"
+    },
+    {
+        "building": "West Village F",
+        "code": "WVF",
+        "zone": "Ruggles Zone"
+    },
+    {
+        "building": "West Village C",
+        "code": "WVC",
+        "zone": "Ruggles Zone"
+    },
+    {
+        "building": "Shillman Hall",
+        "code": "SH",
+        "zone": "Ruggles Zone"
+    },
+    {
+        "building": "Ruggles",
+        "code": "AS",
+        "zone": "Ruggles Zone"
+    },
+    {
+        "building": "Holmes Hall",
+        "code": "HO",
+        "zone": "Ruggles Zone"
+    },
+    {
+        "building": "Dana Research Center",
+        "code": "DA",
+        "zone": "Ruggles Zone"
+    },
+    {
+        "building": "Behrakis Health Sciences Center",
+        "code": "BK",
+        "zone": "Ruggles Zone"
+    },
+    {
+        "building": "Ryder Hall",
+        "code": "RY",
+        "zone": "Ryder Zone"
+    },
+    {
+        "building": "Snell Library",
+        "code": "SL",
+        "zone": "South Central Zone"
+    },
+    {
+        "building": "Snell Engineering Center",
+        "code": "SN",
+        "zone": "South Central Zone"
+    },
+    {
+        "building": "Nightingale Hall",
+        "code": "NI",
+        "zone": "South Central Zone"
+    },
+    {
+        "building": "Churchill Hall",
+        "code": "CH",
+        "zone": "South Central Zone"
+    },
+    {
+        "building": "Lake Hall",
+        "code": "LA",
+        "zone": "West Zone"
+    },
+    {
+        "building": "Knowles Center",
+        "code": "KN",
+        "zone": "West Zone"
+    },
+    {
+        "building": "Kariotis Hall",
+        "code": "KA",
+        "zone": "West Zone"
+    },
+    {
+        "building": "Forsyth Building",
+        "code": "FS",
+        "zone": "West Zone"
+    },
+    {
+        "building": "Dockser Hall",
+        "code": "DK",
+        "zone": "West Zone"
+    },
+    {
+        "building": "Cargill Hall",
+        "code": "CG",
+        "zone": "West Zone"
+    }
+]

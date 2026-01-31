@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node:*)",
+      "Bash(curl:*)",
+      "Bash(cat:*)",
+      "Bash(pkill:*)",
+      "Bash(lsof:*)",
+      "Bash(for i in {1..5})",
+      "Bash(do)",
+      "Bash(echo:*)",
+      "Bash(done)"
+    ]
+  }
+}
