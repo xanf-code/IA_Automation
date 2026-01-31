@@ -9,6 +9,9 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(express.json());
 
+// const MockDate = require("mockdate");
+// MockDate.set("2026-02-04 14:30:00");
+
 // Helper function to get zone from building name
 async function getZoneForBuilding(buildingName) {
   try {
@@ -82,7 +85,7 @@ async function readShiftsJSON() {
   try {
     const shiftsData = await fs.readFile(
       path.join(__dirname, "shifts.json"),
-      "utf-8"
+      "utf-8",
     );
     return JSON.parse(shiftsData);
   } catch (error) {
@@ -92,33 +95,71 @@ async function readShiftsJSON() {
 
 // Helper function to convert 12-hour time with AM/PM to 24-hour format
 function convertTo24Hour(time12h) {
-  const [time, modifier] = time12h.split(' ');
-  let [hours, minutes] = time.split(':').map(Number);
+  const [time, modifier] = time12h.split(" ");
+  let [hours, minutes] = time.split(":").map(Number);
 
-  if (modifier === 'PM' && hours !== 12) {
+  if (modifier === "PM" && hours !== 12) {
     hours += 12;
-  } else if (modifier === 'AM' && hours === 12) {
+  } else if (modifier === "AM" && hours === 12) {
     hours = 0;
   }
 
-  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
 }
 
-// Helper function to find person on shift
-function findPersonOnShift(zone, dateTime, shifts) {
+// Helper function to load selection history
+async function loadSelectionHistory() {
+  try {
+    const historyPath = path.join(__dirname, "selection_history.json");
+    const historyData = await fs.readFile(historyPath, "utf-8");
+    return JSON.parse(historyData);
+  } catch (error) {
+    // If file doesn't exist, return empty history
+    if (error.code === "ENOENT") {
+      return {};
+    }
+    throw error;
+  }
+}
+
+// Helper function to save selection history
+async function saveSelectionHistory(history) {
+  const historyPath = path.join(__dirname, "selection_history.json");
+  await fs.writeFile(historyPath, JSON.stringify(history, null, 2), "utf-8");
+}
+
+// Helper function to get selection count for a person on a specific date
+function getSelectionCount(history, personName, date) {
+  const key = `${date}_${personName}`;
+  return history[key] || 0;
+}
+
+// Helper function to update selection count
+function updateSelectionCount(history, personName, date) {
+  const key = `${date}_${personName}`;
+  history[key] = (history[key] || 0) + 1;
+  return history;
+}
+
+// Helper function to find person on shift using priority-based selection
+async function findPersonOnShift(zone, shifts) {
   // Parse the current date and time (use local time, not UTC)
   const now = new Date();
-  const currentDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-  const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+  const currentDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+  const currentTime = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
 
-  console.log(`Looking for shifts in ${zone} on ${currentDate} at ${currentTime}`);
+  console.log(
+    `Looking for shifts in ${zone} on ${currentDate} at ${currentTime}`,
+  );
 
   // Filter shifts for the specific zone and date
   const relevantShifts = shifts.filter(
-    (shift) => shift.zone === zone && shift.date === currentDate
+    (shift) => shift.zone === zone && shift.date === currentDate,
   );
 
-  console.log(`Found ${relevantShifts.length} shifts for ${zone} on ${currentDate}`);
+  console.log(
+    `Found ${relevantShifts.length} shifts for ${zone} on ${currentDate}`,
+  );
 
   // Find people currently on shift
   const peopleOnShift = relevantShifts.filter((shift) => {
@@ -130,12 +171,53 @@ function findPersonOnShift(zone, dateTime, shifts) {
     return currentTime >= shiftStart24 && currentTime < shiftEnd24;
   });
 
-  console.log(`People currently on shift:`, peopleOnShift.map(s => `${s.personName} (${s.startTime}-${s.endTime})`));
+  console.log(
+    `People currently on shift:`,
+    peopleOnShift.map((s) => `${s.personName} (${s.startTime}-${s.endTime})`),
+  );
 
   if (peopleOnShift.length > 0) {
-    // Randomly pick one person from the list
-    const randomIndex = Math.floor(Math.random() * peopleOnShift.length);
-    return { name: peopleOnShift[randomIndex].personName };
+    // Load selection history
+    const history = await loadSelectionHistory();
+
+    // Priority-based selection: sort by selection count (ascending)
+    const peopleWithPriority = peopleOnShift.map((shift) => ({
+      personName: shift.personName,
+      selectionCount: getSelectionCount(history, shift.personName, currentDate),
+    }));
+
+    // Sort by selection count (lowest first)
+    peopleWithPriority.sort((a, b) => a.selectionCount - b.selectionCount);
+
+    // Get the lowest selection count
+    const lowestCount = peopleWithPriority[0].selectionCount;
+
+    // Get all people with the lowest count (for tie-breaking)
+    const leastSelectedPeople = peopleWithPriority.filter(
+      (p) => p.selectionCount === lowestCount,
+    );
+
+    // If there's a tie, randomly pick from the least selected
+    const randomIndex = Math.floor(Math.random() * leastSelectedPeople.length);
+    const selectedPerson = leastSelectedPeople[randomIndex].personName;
+
+    console.log(
+      `Priority selection: ${selectedPerson} (selected ${lowestCount} times today)`,
+    );
+
+    // Update selection history
+    const updatedHistory = updateSelectionCount(
+      history,
+      selectedPerson,
+      currentDate,
+    );
+    await saveSelectionHistory(updatedHistory);
+
+    return {
+      name: selectedPerson,
+      selectionCount: lowestCount + 1,
+      totalOnShift: peopleOnShift.length,
+    };
   } else {
     return { name: "NA" };
   }
@@ -170,8 +252,8 @@ app.post("/api/suggest-person", async (req, res) => {
     // Step 3: Read shifts JSON
     const shifts = await readShiftsJSON();
 
-    // Step 4: Find person on shift using logic
-    const suggestion = findPersonOnShift(zoneInfo.zone, dateTime, shifts);
+    // Step 4: Find person on shift using priority-based selection
+    const suggestion = await findPersonOnShift(zoneInfo.zone, shifts);
 
     // Return the result
     res.json(suggestion);
