@@ -1,6 +1,7 @@
 {
   "name": "ia-automation-api",
   "version": "1.0.0",
+  "type": "module",
   "description": "Lightweight backend API for building zone and shift management",
   "main": "server.js",
   "scripts": {
@@ -21,6 +22,7 @@
     "mockdate": "^3.0.5",
     "openai": "^4.26.0",
     "pdf-parse": "^1.1.1",
+    "servicenow-rest-api": "^1.2.2",
     "sinon": "^21.0.1"
   },
   "devDependencies": {

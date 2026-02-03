@@ -1,11 +1,17 @@
-const OpenAI = require("openai");
-const fs = require("fs").promises;
-const path = require("path");
-require("dotenv").config();
+import OpenAI from "openai";
+import fs from "fs/promises";
+import path from "path";
+import { fileURLToPath } from "url";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-async function detectBuilding(short_description, description) {
+async function detectBuildingWithDescription(short_description, description) {
   const zonesData = await fs.readFile(
     path.join(__dirname, "zones.json"),
     "utf-8",
@@ -45,4 +51,30 @@ Response (building name or building_not_found):`;
   return response.choices[0].message.content.trim();
 }
 
-module.exports = { detectBuilding };
+async function getZoneForBuilding(buildingName) {
+  try {
+    const zonesData = await fs.readFile(
+      path.join(__dirname, "zones.json"),
+      "utf-8",
+    );
+    const zones = JSON.parse(zonesData);
+
+    const building = zones.find(
+      (z) => z.building.toLowerCase() === buildingName.toLowerCase(),
+    );
+
+    if (!building) {
+      return null;
+    }
+
+    return {
+      building: building.building,
+      code: building.code,
+      zone: building.zone,
+    };
+  } catch (error) {
+    throw new Error(`Error reading zones file: ${error.message}`);
+  }
+}
+
+export { detectBuildingWithDescription, getZoneForBuilding };
