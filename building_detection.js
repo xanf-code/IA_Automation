@@ -51,7 +51,7 @@ Response (building name or building_not_found):`;
   return response.choices[0].message.content.trim();
 }
 
-async function getZoneForBuilding(buildingName) {
+async function getZoneForBuilding(buildingInput) {
   try {
     const zonesData = await fs.readFile(
       path.join(__dirname, "zones.json"),
@@ -59,9 +59,17 @@ async function getZoneForBuilding(buildingName) {
     );
     const zones = JSON.parse(zonesData);
 
-    const building = zones.find(
-      (z) => z.building.toLowerCase() === buildingName.toLowerCase(),
+    // Try to match by building name first
+    let building = zones.find(
+      (z) => z.building.toLowerCase() === buildingInput.toLowerCase(),
     );
+
+    // If not found by name, try to match by code
+    if (!building) {
+      building = zones.find(
+        (z) => z.code.toLowerCase() === buildingInput.toLowerCase(),
+      );
+    }
 
     if (!building) {
       return null;
