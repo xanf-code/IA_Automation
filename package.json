@@ -5,7 +5,8 @@
   "description": "Lightweight backend API for building zone and shift management",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node index.js",
+    "server": "node server.js",
     "dev": "nodemon server.js",
     "bot": "node telegram-bot.js",
     "bot:dev": "nodemon telegram-bot.js"
